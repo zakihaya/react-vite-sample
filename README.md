@@ -33,3 +33,10 @@ If you are developing a production application, we recommend updating the config
 ```sh
 npm create vite@latest vite-practice  -- --template react-ts  # `vite-practice`というプロジェクトを作成
 ```
+
+必要なライブラリをインストールし、開発サーバを起動してみる
+
+```sh
+npm i
+npm run dev
+```
