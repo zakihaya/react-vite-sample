@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { Todo } from "@/types/Todo";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [items, setItems] = useState<Array<Todo>>([]);
+  const [title, setTitle] = useState<string>("");
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="App">
+      <div className="items">
+        {items.map((item) => (
+          <div key={item.id}>
+            <input
+              type="checkbox"
+              checked={item.completed}
+              onChange={() => {
+                setItems(
+                  items.map((i) => {
+                    if (i.id === item.id) {
+                      return {
+                        ...i,
+                        completed: !item.completed,
+                      };
+                    }
+                    return i;
+                  })
+                );
+              }}
+            />
+            id:{item.id}
+            &nbsp;&nbsp;
+            {item.title}
+          </div>
+        ))}
       </div>
-      <h1>Hello world</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <input
+        type="text"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <br />
+      <button
+        style={{ color: "#fff" }}
+        onClick={() => {
+          setItems([
+            ...items,
+            {
+              id: new Date().getTime(),
+              title,
+              completed: false,
+            },
+          ]);
+          setTitle("");
+        }}
+      >
+        Add
+      </button>
+    </div>
+  );
 }
 
-export default App
+export default App;
