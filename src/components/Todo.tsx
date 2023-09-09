@@ -19,6 +19,7 @@ const TodoComponent = ({ item, onUpdate }: TodoProps) => {
         }}
       />
       id:{item.id}
+      &nbsp;&nbsp; teamId:{item.teamId}
       &nbsp;&nbsp;
       {item.title}
     </div>

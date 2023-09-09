@@ -1,11 +1,14 @@
 import TodoListComponent from "@/components/TodoList";
+import { TeamIdProvider } from "@/contexts/TeamIdContext";
 import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <TodoListComponent />
-    </div>
+    <TeamIdProvider>
+      <div className="App">
+        <TodoListComponent />
+      </div>
+    </TeamIdProvider>
   );
 }
 
