@@ -2,9 +2,11 @@ import { useState } from "react";
 import TodoComponent from "./Todo";
 import TodoFormComponent from "./TodoForm";
 import { Todo } from "@/types/Todo";
+import { useTeamId } from "@/contexts/TeamIdContext";
 
 const TodoListComponent = () => {
   const [items, setItems] = useState<Array<Todo>>([]);
+  const currentTeamId = useTeamId();
 
   const onUpdate = (newValue: Todo) => {
     setItems(
@@ -26,6 +28,7 @@ const TodoListComponent = () => {
 
   return (
     <>
+      <div className="current-team-id">currentTeamId: {currentTeamId}</div>
       <div className="items">
         {items.map((item) => (
           <TodoComponent key={item.id} item={item} onUpdate={onUpdate} />

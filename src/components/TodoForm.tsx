@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Todo } from "@/types/Todo";
+import { useTeamId, useRefreshTeamId } from "@/contexts/TeamIdContext";
 
 type TodoFormProps = {
   onAdd: (todo: Todo) => void;
@@ -11,6 +12,8 @@ type FormValue = {
 
 const TodoFormComponent = ({ onAdd }: TodoFormProps) => {
   const [formValue, setFormValue] = useState<FormValue>({ title: "" });
+  const teamId = useTeamId();
+  const refreshTeamId = useRefreshTeamId();
 
   const getId = useCallback(() => {
     return new Date().getTime();
@@ -31,11 +34,21 @@ const TodoFormComponent = ({ onAdd }: TodoFormProps) => {
             id: getId(),
             title: formValue.title,
             completed: false,
+            teamId,
           });
           setFormValue({ title: "" });
         }}
       >
         Add
+      </button>
+      <br />
+      <button
+        style={{ color: "#fff" }}
+        onClick={() => {
+          refreshTeamId();
+        }}
+      >
+        Refresh TeamId
       </button>
     </div>
   );
