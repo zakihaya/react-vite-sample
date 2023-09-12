@@ -2,6 +2,7 @@ import { useState } from "react";
 import TodoComponent from "./Todo";
 import TodoFormComponent from "./TodoForm";
 import { Todo } from "@/types/Todo";
+import ButtonComponent from "@/components/ui/Button";
 import { useTeamId } from "@/contexts/TeamIdContext";
 
 const TodoListComponent = () => {
@@ -35,6 +36,15 @@ const TodoListComponent = () => {
         ))}
       </div>
       <TodoFormComponent onAdd={onAdd} />
+      <br />
+      <br />
+      <br />
+      <ButtonComponent
+        text="sample button"
+        onClick={() => {
+          window.alert("clicked");
+        }}
+      />
     </>
   );
 };
