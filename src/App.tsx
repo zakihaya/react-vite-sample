@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import TodoListComponent from "@/components/TodoList";
+import TodosPage from "@/pages/Todos";
+import AboutPage from "@/pages/About";
 import { TeamIdProvider } from "@/contexts/TeamIdContext";
 import "./App.css";
 
@@ -9,7 +10,8 @@ function App() {
       <div className="App">
         <h1>Manage Todos</h1>
         <Routes>
-          <Route path="/" element={<TodoListComponent />} />
+          <Route path="/" element={<TodosPage />} />
+          <Route path="/about" element={<AboutPage />} />
         </Routes>
       </div>
     </TeamIdProvider>
