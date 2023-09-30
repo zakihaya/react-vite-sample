@@ -1,50 +1,41 @@
-import { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { Person } from "@/types/Person";
-const PersonsComponent = () => {
-  const [persons, setPersons] = useState<Person[]>([]);
 
-  const fetchPersons = () => {
-    // データはここから取ってくる https://www.umayadia.com/Note/Note028WebAPISample.htm#A5_2
-    return fetch("https://umayadia-apisample.azurewebsites.net/api/persons")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          const personsData: Person[] = [];
-          // 取得したデータにIDを付与してstateに格納
-          data.data.forEach((person: Omit<Person, "id">) => {
-            personsData.push({
-              id: uuidv4(),
-              ...person,
-            });
-          });
-          setPersons(personsData);
-        }
-      });
+const PersonsComponent = () => {
+  const fetchPersonsWithTanstack = async () => {
+    const result = await axios.get<{
+      success: boolean;
+      data: Omit<Person, "id">[];
+    }>("https://umayadia-apisample.azurewebsites.net/api/persons");
+    return result.data;
   };
 
-  useEffect(() => {
-    fetchPersons();
-  }, []);
+  const { data, isLoading } = useQuery({
+    queryKey: ["persons"],
+    queryFn: fetchPersonsWithTanstack,
+  });
 
   return (
     <>
-      <div>persons</div>
-      <div>
-        {persons.map((person) => (
-          <div key={person.id}>
-            {person.id}
-            &nbsp;|&nbsp;
-            {person.name}
-            &nbsp;|&nbsp;
-            {person.note}
-            &nbsp;|&nbsp;
-            {person.age}
-            &nbsp;|&nbsp;
-            {person.registerDate}
-          </div>
-        ))}
-      </div>
+      <div>persons by Tanstack</div>
+      {isLoading && <div>Loading...</div>}
+      {data && console.log(data)}
+      {data && (
+        <div>
+          {data.data.map((d) => (
+            <div key={d.name}>
+              {d.name}
+              &nbsp;|&nbsp;
+              {d.note}
+              &nbsp;|&nbsp;
+              {d.age}
+              &nbsp;|&nbsp;
+              {d.registerDate}
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 };
