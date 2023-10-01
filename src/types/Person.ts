@@ -1,6 +1,6 @@
 export type Person = {
   name: string;
   note: string;
-  age?: number;
+  age?: number | null;
   registerDate?: string;
 };

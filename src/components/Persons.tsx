@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import PersonFormComponent from "@/components/PersonForm";
 import { Person } from "@/types/Person";
 
 const PersonsComponent = () => {
@@ -12,10 +13,39 @@ const PersonsComponent = () => {
     return result.data;
   };
 
+  const queryClient = useQueryClient();
+
   const { data, isLoading } = useQuery({
     queryKey: ["persons"],
     queryFn: fetchPersonsWithTanstack,
   });
+
+  const createPerson = async (newPerson: Person) => {
+    const result = await axios.post(
+      "https://umayadia-apisample.azurewebsites.net/api/persons",
+      newPerson
+    );
+    return result.data;
+  };
+
+  const addMutation = useMutation({
+    mutationFn: createPerson,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["persons"]);
+    },
+  });
+
+  const onSubmit = (name: string, note: string, age: number | null) => {
+    console.log(name);
+    console.log(note);
+    console.log(age);
+    addMutation.mutate({
+      name: name,
+      note: note,
+      age: age,
+      registerDate: new Date().toISOString(),
+    });
+  };
 
   return (
     <>
@@ -37,6 +67,8 @@ const PersonsComponent = () => {
           ))}
         </div>
       )}
+      <hr />
+      <PersonFormComponent onSubmit={onSubmit} />
     </>
   );
 };
