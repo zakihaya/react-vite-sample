@@ -2,6 +2,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import TodosPage from "@/pages/Todos";
 import PersonsPage from "@/pages/Persons";
+import PersonPage from "@/pages/Person";
 import AboutPage from "@/pages/About";
 import NoMatchPage from "@/pages/NoMatch";
 import { TeamIdProvider } from "@/contexts/TeamIdContext";
@@ -31,6 +32,7 @@ function App() {
           <Routes>
             <Route path="/" element={<TodosPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/persons/:name" element={<PersonPage />} />
             <Route path="/persons" element={<PersonsPage />} />
             <Route path="*" element={<NoMatchPage />} />
           </Routes>

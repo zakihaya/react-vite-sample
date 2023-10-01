@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { Person } from "@/types/Person";
 
@@ -6,7 +7,7 @@ const PersonsComponent = () => {
   const fetchPersonsWithTanstack = async () => {
     const result = await axios.get<{
       success: boolean;
-      data: Omit<Person, "id">[];
+      data: Person[];
     }>("https://umayadia-apisample.azurewebsites.net/api/persons");
     return result.data;
   };
@@ -25,7 +26,7 @@ const PersonsComponent = () => {
         <div>
           {data.data.map((d) => (
             <div key={d.name}>
-              {d.name}
+              <Link to={`/persons/${d.name}`}>{d.name}</Link>
               &nbsp;|&nbsp;
               {d.note}
               &nbsp;|&nbsp;
