@@ -9,6 +9,7 @@
     "paths": {
       "@/*": ["*"]
     },
+    "sourceMap": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
