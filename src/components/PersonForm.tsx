@@ -1,14 +1,17 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { z } from "zod";
 
 type PersonFormProps = {
   onSubmit: (name: string, note: string, age: number | null) => void;
 };
 
-type FormValue = {
-  name: string;
-  note: string;
-  age: number | null;
-};
+const FormValueSchema = z.object({
+  name: z.string().min(1).max(10),
+  note: z.string().min(1).max(20),
+  age: z.number().gte(0).lte(150).nullable(),
+});
+
+type FormValue = z.infer<typeof FormValueSchema>;
 
 const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
   const [formValue, setFormValue] = useState<FormValue>({
@@ -16,8 +19,38 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
     note: "",
     age: null,
   });
+  const [errors, setErrors] = useState<string[]>([]);
 
   const onClick = () => {
+    try {
+      FormValueSchema.parse(formValue);
+    } catch (e) {
+      const submitErrors: string[] = [];
+      if (e instanceof z.ZodError) {
+        console.log("zod error");
+        const errors = e.flatten();
+        if (errors.formErrors.length > 0) {
+          submitErrors.push("formErrors");
+          submitErrors.push(...errors.formErrors);
+        }
+        if (errors.fieldErrors.name) {
+          submitErrors.push("name");
+          submitErrors.push(...errors.fieldErrors.name);
+        }
+        if (errors.fieldErrors.note) {
+          submitErrors.push("note");
+          submitErrors.push(...errors.fieldErrors.note);
+        }
+        if (errors.fieldErrors.age) {
+          submitErrors.push("age");
+          submitErrors.push(...errors.fieldErrors.age);
+        }
+        setErrors(submitErrors);
+      }
+      console.log("error", e);
+      return;
+    }
+    setErrors([]);
     onSubmit(formValue.name, formValue.note, formValue.age);
   };
 
@@ -67,6 +100,11 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
         />
       </div>
       <button onClick={onClick}>save</button>
+      <div className="errors">
+        {errors.map((e, index) => (
+          <div key={index}>{e}</div>
+        ))}
+      </div>
     </>
   );
 };
