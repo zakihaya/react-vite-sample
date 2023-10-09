@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { z } from "zod";
+import Bugsnag from "@bugsnag/js";
 
 type PersonFormProps = {
   onSubmit: (name: string, note: string, age: number | null) => void;
@@ -46,6 +47,8 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
           submitErrors.push(...errors.fieldErrors.age);
         }
         setErrors(submitErrors);
+        // TODO: Bugsnagのテスト用にエラーを送っているが、本来は毎回送る必要はない
+        Bugsnag.notify(e);
       }
       console.log("error", e);
       return;
