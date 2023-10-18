@@ -58,7 +58,7 @@
     "eslint-plugin-storybook": "^0.6.15",
     "jsdom": "^22.1.0",
     "prettier": "^3.0.3",
-    "sass": "^1.69.3",
+    "sass": "^1.69.4",
     "storybook": "^7.4.6",
     "typescript": "^5.2.2",
     "vite": "^4.4.11",
