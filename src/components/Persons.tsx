@@ -32,7 +32,7 @@ const PersonsComponent = () => {
   const addMutation = useMutation({
     mutationFn: createPerson,
     onSuccess: () => {
-      queryClient.invalidateQueries(["persons"]);
+      queryClient.invalidateQueries({ queryKey: ["persons"] });
     },
   });
 
