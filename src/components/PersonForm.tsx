@@ -20,6 +20,7 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
   const { register, handleSubmit } = useForm<FormValue>();
 
   const onSubmitForm: SubmitHandler<FormValue> = (data) => {
+    console.log("onSubmitForm");
     console.log(data);
     // setFormValue(data);
     onClick(data);
