@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PersonFormComponent from "@/components/PersonForm";
+import PersonFormOldComponent from "@/components/PersonFormOld";
 import { Person } from "@/types/Person";
 
 const PersonsComponent = () => {
@@ -68,6 +69,9 @@ const PersonsComponent = () => {
         </div>
       )}
       <hr />
+      <PersonFormOldComponent onSubmit={onSubmit} />
+      <hr />
+      <div>New Form</div>
       <PersonFormComponent onSubmit={onSubmit} />
     </>
   );

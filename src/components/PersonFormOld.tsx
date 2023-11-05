@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import React, { useState } from "react";
 import { z } from "zod";
 import Bugsnag from "@bugsnag/js";
 
@@ -16,17 +15,14 @@ const FormValueSchema = z.object({
 type FormValue = z.infer<typeof FormValueSchema>;
 
 const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
+  const [formValue, setFormValue] = useState<FormValue>({
+    name: "",
+    note: "",
+    age: null,
+  });
   const [errors, setErrors] = useState<string[]>([]);
-  const { register, handleSubmit } = useForm<FormValue>();
 
-  const onSubmitForm: SubmitHandler<FormValue> = (data) => {
-    console.log("onSubmitForm");
-    console.log(data);
-    // setFormValue(data);
-    onClick(data);
-  };
-
-  const onClick = (formValue: FormValue) => {
+  const onClick = () => {
     try {
       FormValueSchema.parse(formValue);
     } catch (e) {
@@ -62,27 +58,57 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)}>
+    <>
       <div>
-        <input type="text" id="name" {...register("name")} />
+        <input
+          type="text"
+          name="name"
+          placeholder="name"
+          value={formValue.name}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormValue({
+              ...formValue,
+              name: e.target.value,
+            });
+          }}
+        />
       </div>
       <div>
-        <input type="text" id="name" {...register("note")} />
+        <input
+          type="text"
+          name="note"
+          placeholder="note"
+          value={formValue.note}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormValue({
+              ...formValue,
+              note: e.target.value,
+            });
+          }}
+        />
       </div>
       <div>
         <input
           type="number"
-          id="age"
-          {...register("age", { valueAsNumber: true })}
+          name="age"
+          placeholder="age"
+          value={formValue.age ?? ""}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.value ? parseInt(e.target.value) : null;
+            setFormValue({
+              ...formValue,
+              age: newValue,
+            });
+          }}
         />
       </div>
-      <button type="submit">save</button>
+      <button onClick={onClick}>save</button>
       <div className="errors">
         {errors.map((e, index) => (
           <div key={index}>{e}</div>
         ))}
       </div>
-    </form>
+    </>
   );
 };
 
