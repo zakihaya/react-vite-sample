@@ -64,15 +64,16 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmitForm)}>
       <div>
-        <input type="text" id="name" {...register("name")} />
+        <input type="text" id="name" placeholder="name" {...register("name")} />
       </div>
       <div>
-        <input type="text" id="name" {...register("note")} />
+        <input type="text" id="note" placeholder="note" {...register("note")} />
       </div>
       <div>
         <input
           type="number"
           id="age"
+          placeholder="age"
           {...register("age", { valueAsNumber: true })}
         />
       </div>
