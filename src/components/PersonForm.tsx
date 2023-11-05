@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Bugsnag from "@bugsnag/js";
 
@@ -8,80 +8,89 @@ type PersonFormProps = {
 };
 
 const FormValueSchema = z.object({
-  name: z.string().min(1).max(10),
-  note: z.string().min(1).max(20),
-  age: z.number().gte(0).lte(150).nullable(),
+  name: z
+    .string({ invalid_type_error: "入力値に誤りがあります" })
+    .min(1, { message: "1文字以上で入力してください" })
+    .max(10, { message: "10文字以下で入力してください" }),
+  note: z
+    .string({ invalid_type_error: "入力値に誤りがあります" })
+    .min(1, { message: "1文字以上で入力してください" })
+    .max(20, { message: "20文字以下で入力してください" }),
+  age: z
+    .number({
+      required_error: "必須な値です",
+      invalid_type_error: "数値を入力してください",
+    })
+    .gte(0, { message: "0以上で入力してください" })
+    .lte(150, { message: "150以下で入力してください" }),
 });
 
 type FormValue = z.infer<typeof FormValueSchema>;
 
 const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
-  const [errors, setErrors] = useState<string[]>([]);
-  const { register, handleSubmit } = useForm<FormValue>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors, isDirty, isValid },
+  } = useForm<FormValue>({
+    resolver: zodResolver(FormValueSchema),
+    reValidateMode: "onSubmit",
+    criteriaMode: "all",
+  });
 
   const onSubmitForm: SubmitHandler<FormValue> = (data) => {
     console.log("onSubmitForm");
     console.log(data);
-    // setFormValue(data);
-    onClick(data);
+    onSubmit(data.name, data.note, data.age);
+    reset();
   };
 
-  const onClick = (formValue: FormValue) => {
-    try {
-      FormValueSchema.parse(formValue);
-    } catch (e) {
-      const submitErrors: string[] = [];
-      if (e instanceof z.ZodError) {
-        console.log("zod error");
-        const errors = e.flatten();
-        if (errors.formErrors.length > 0) {
-          submitErrors.push("formErrors");
-          submitErrors.push(...errors.formErrors);
-        }
-        if (errors.fieldErrors.name) {
-          submitErrors.push("name");
-          submitErrors.push(...errors.fieldErrors.name);
-        }
-        if (errors.fieldErrors.note) {
-          submitErrors.push("note");
-          submitErrors.push(...errors.fieldErrors.note);
-        }
-        if (errors.fieldErrors.age) {
-          submitErrors.push("age");
-          submitErrors.push(...errors.fieldErrors.age);
-        }
-        setErrors(submitErrors);
-        // TODO: Bugsnagのテスト用にエラーを送っているが、本来は毎回送る必要はない
-        Bugsnag.notify(e);
-      }
-      console.log("error", e);
-      return;
-    }
-    setErrors([]);
-    onSubmit(formValue.name, formValue.note, formValue.age);
+  const onSubmitError: SubmitErrorHandler<FormValue> = (errorOnSubmit) => {
+    console.log("onError");
+    console.log(errorOnSubmit);
+    // TODO: Bugsnagのテスト用にエラーを送っているが、本来は毎回送る必要はない
+    const errorMessages = Object.entries(errorOnSubmit).map(
+      ([type, message]) =>
+        "{type: " + type + ", message: " + message?.message + "}"
+    );
+    console.log("getValues", getValues());
+    Bugsnag.notify({
+      errorClass: "FieldErrors",
+      errorMessage: errorMessages.join(", "),
+    });
   };
 
+  // handleSubmitの第2引数はエラー時のコールバック
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)}>
+    <form onSubmit={handleSubmit(onSubmitForm, onSubmitError)}>
       <div>
-        <input type="text" id="name" {...register("name")} />
+        <input type="text" id="name" placeholder="name" {...register("name")} />
+        {errors.name && <p>{errors.name.message}</p>}
       </div>
       <div>
-        <input type="text" id="name" {...register("note")} />
+        <input type="text" id="note" placeholder="note" {...register("note")} />
+        {errors.note && <p>{errors.note.message}</p>}
       </div>
       <div>
         <input
           type="number"
           id="age"
+          placeholder="age"
           {...register("age", { valueAsNumber: true })}
         />
+        {errors.age && <p>{errors.age.message}</p>}
       </div>
-      <button type="submit">save</button>
-      <div className="errors">
-        {errors.map((e, index) => (
-          <div key={index}>{e}</div>
-        ))}
-      </div>
+      <button type="submit" disabled={!isDirty || !isValid}>
+        save（isValid時のみ有効）
+      </button>
+      <br />
+      <button type="submit">save（エラーを確認する用）</button>
+      <br />
+      <button type="button" onClick={() => reset()}>
+        reset
+      </button>
     </form>
   );
 };
