@@ -8,9 +8,21 @@ type PersonFormProps = {
 };
 
 const FormValueSchema = z.object({
-  name: z.string().min(1).max(10),
-  note: z.string().min(1).max(20),
-  age: z.number().gte(0).lte(150).nullable(),
+  name: z
+    .string({ invalid_type_error: "入力値に誤りがあります" })
+    .min(1, { message: "1文字以上で入力してください" })
+    .max(10, { message: "10文字以下で入力してください" }),
+  note: z
+    .string({ invalid_type_error: "入力値に誤りがあります" })
+    .min(1, { message: "1文字以上で入力してください" })
+    .max(20, { message: "20文字以下で入力してください" }),
+  age: z
+    .number({
+      required_error: "必須な値です",
+      invalid_type_error: "数値を入力してください",
+    })
+    .gte(0, { message: "0以上で入力してください" })
+    .lte(150, { message: "150以下で入力してください" }),
 });
 
 type FormValue = z.infer<typeof FormValueSchema>;
@@ -20,6 +32,7 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors, isDirty, isValid },
   } = useForm<FormValue>({
     resolver: zodResolver(FormValueSchema),
@@ -42,6 +55,7 @@ const PersonFormComponent = ({ onSubmit }: PersonFormProps) => {
       ([type, message]) =>
         "{type: " + type + ", message: " + message?.message + "}"
     );
+    console.log("getValues", getValues());
     Bugsnag.notify({
       errorClass: "FieldErrors",
       errorMessage: errorMessages.join(", "),
