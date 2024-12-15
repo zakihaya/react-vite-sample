@@ -1,0 +1,37 @@
+# Rux tsc
+name: tsc
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  tsc:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Installtion of NodeJS ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache node_modules
+        id: node_modules_cache_id
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node-v${{ matrix.node-version }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/package-lock.json')) }}
+
+      - name: Install npm packages
+        if: steps.node_modules_cache_id.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: tsc primitive
+        run: npx tsc
