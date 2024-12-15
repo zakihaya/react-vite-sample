@@ -1,5 +1,5 @@
-# Run eslint
-name: lint
+# Rux tsc
+name: tsc
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
       - "**"
 
 jobs:
-  build:
+  tsc:
     runs-on: ubuntu-latest
 
     strategy:
@@ -16,6 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Installtion of NodeJS ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -32,5 +33,5 @@ jobs:
         if: steps.node_modules_cache_id.outputs.cache-hit != 'true'
         run: npm install
 
-      - name: Run ESLint
-        run: npx eslint ./src --ext js,jsx,ts,tsx --max-warnings 0
+      - name: tsc primitive
+        run: npx tsc

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Person } from "@/types/Person";
+import type { Person } from "@/types/Person";
 
 const PersonComponent = () => {
   const { name } = useParams();
@@ -22,7 +22,6 @@ const PersonComponent = () => {
     <>
       <div>persons by Tanstack</div>
       {isLoading && <div>Loading...</div>}
-      {data && console.log(data)}
       {data?.data && (
         <div>
           {data.data.name}

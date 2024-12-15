@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import PersonFormComponent from "@/components/PersonForm";
-import { Person } from "@/types/Person";
+import type { Person } from "@/types/Person";
 
 const PersonsComponent = () => {
   const fetchPersonsWithTanstack = async () => {
@@ -36,9 +36,6 @@ const PersonsComponent = () => {
   });
 
   const onSubmit = (name: string, note: string, age: number | null) => {
-    console.log(name);
-    console.log(note);
-    console.log(age);
     addMutation.mutate({
       name: name,
       note: note,
@@ -51,7 +48,6 @@ const PersonsComponent = () => {
     <>
       <div>persons by Tanstack</div>
       {isLoading && <div>Loading...</div>}
-      {data && console.log(data)}
       {data && (
         <div>
           {data.data.map((d) => (
