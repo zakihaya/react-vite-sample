@@ -15,15 +15,15 @@ jobs:
         node-version: [20, 22]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Installtion of NodeJS ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Cache node_modules
         id: node_modules_cache_id
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: node_modules
           key: node-v${{ matrix.node-version }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/package-lock.json')) }}
@@ -38,6 +38,6 @@ jobs:
       - name: Generate coverage file
         run: npm run test:coverage
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           files: ./coverage/coverage-final.json
